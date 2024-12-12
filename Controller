@@ -1,0 +1,60 @@
+package application;
+
+import javafx.scene.shape.Rectangle;
+
+public class Controller {
+
+    // Memeriksa apakah form bisa bergerak ke kiri
+    public boolean canMoveLeft(GameObject form, boolean[][] mesh) {
+        // Jika game over, tidak ada pergerakan
+        if (Tetris.gameOver) return false;
+
+        // Memeriksa apakah blok bisa bergerak ke kiri tanpa keluar dari grid atau bertabrakan
+        for (Rectangle block : form.getBlocks()) {
+            int x = (int) (block.getX() / form.getSize());
+            int y = (int) (block.getY() / form.getSize());
+
+            // Periksa apakah blok berada di batas kiri atau bertabrakan dengan blok lain
+            if (x - 1 < 0 || mesh[x - 1][y]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Memeriksa apakah form bisa bergerak ke kanan
+    public boolean canMoveRight(GameObject form, boolean[][] mesh) {
+        // Jika game over, tidak ada pergerakan
+        if (Tetris.gameOver) return false;
+
+        // Memeriksa apakah blok bisa bergerak ke kanan tanpa keluar dari grid atau bertabrakan
+        for (Rectangle block : form.getBlocks()) {
+            int x = (int) (block.getX() / form.getSize());
+            int y = (int) (block.getY() / form.getSize());
+
+            // Periksa apakah blok berada di batas kanan atau bertabrakan dengan blok lain
+            if (x + 1 >= Tetris.WIDTH || mesh[x + 1][y]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Memeriksa apakah form bisa bergerak ke bawah
+    public boolean canMoveDown(GameObject form, boolean[][] mesh) {
+        // Jika game over, tidak ada pergerakan
+        if (Tetris.gameOver) return false;
+
+        // Memeriksa apakah blok bisa bergerak ke bawah tanpa keluar dari grid atau bertabrakan
+        for (Rectangle block : form.getBlocks()) {
+            int x = (int) (block.getX() / form.getSize());
+            int y = (int) (block.getY() / form.getSize());
+
+            // Periksa apakah blok berada di batas bawah atau bertabrakan dengan blok lain
+            if (y + 1 >= Tetris.HEIGHT || mesh[x][y + 1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
