@@ -1,0 +1,176 @@
+package application;
+
+import javafx.animation.RotateTransition;
+import javafx.animation.TranslateTransition;
+import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
+
+public class Form extends GameObject {
+    private int rotationState = 0; // Keadaan rotasi saat ini
+
+    // Constructor yang menerima size, type, dan gradient
+    public Form(int size, String type) {
+        super(size);  // Panggil konstruktor induk (GameObject)
+
+        // Tentukan gradasi warna untuk setiap bentuk
+        LinearGradient gradient;
+        switch (type) {
+            case "Line":
+                gradient = new LinearGradient(0, 0, 1, 1, true, null, 
+                        new Stop(0, Color.CYAN), new Stop(1, Color.BLUE));
+                createLine(gradient);
+                break;
+            case "Square":
+                gradient = new LinearGradient(0, 0, 1, 1, true, null, 
+                        new Stop(0, Color.YELLOW), new Stop(1, Color.GOLD));
+                createSquare(gradient);
+                break;
+            case "T":
+                gradient = new LinearGradient(0, 0, 1, 1, true, null, 
+                        new Stop(0, Color.PURPLE), new Stop(1, Color.VIOLET));
+                createT(gradient);
+                break;
+            case "Z":
+                gradient = new LinearGradient(0, 0, 1, 1, true, null, 
+                        new Stop(0, Color.RED), new Stop(1, Color.DARKRED));
+                createZ(gradient);
+                break;
+            case "L":
+                gradient = new LinearGradient(0, 0, 1, 1, true, null, 
+                        new Stop(0, Color.ORANGE), new Stop(1, Color.DARKORANGE));
+                createL(gradient);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid shape type.");
+        }
+    }
+
+    // Method untuk membuat bentuk Line
+    private void createLine(LinearGradient gradient) {
+        blocks[0] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[1] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[2] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[3] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[0].setX(size * 4);
+        blocks[1].setX(size * 5);
+        blocks[2].setX(size * 6);
+        blocks[3].setX(size * 7);
+    }
+
+    // Method untuk membuat bentuk Square
+    private void createSquare(LinearGradient gradient) {
+        blocks[0] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[1] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[2] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[3] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[0].setX(size * 4);
+        blocks[1].setX(size * 5);
+        blocks[2].setX(size * 4);
+        blocks[2].setY(size);
+        blocks[3].setX(size * 5);
+        blocks[3].setY(size);
+    }
+
+    // Method untuk membuat bentuk T
+    private void createT(LinearGradient gradient) {
+        blocks[0] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[1] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[2] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[3] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[0].setX(size * 4);
+        blocks[1].setX(size * 5);
+        blocks[2].setX(size * 6);
+        blocks[3].setX(size * 5);
+        blocks[3].setY(size);
+    }
+
+    // Method untuk membuat bentuk Z
+    private void createZ(LinearGradient gradient) {
+        blocks[0] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[1] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[2] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[3] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[0].setX(size * 4);
+        blocks[1].setX(size * 5);
+        blocks[2].setX(size * 5);
+        blocks[2].setY(size);
+        blocks[3].setX(size * 6);
+        blocks[3].setY(size);
+    }
+
+    // Method untuk membuat bentuk L
+    private void createL(LinearGradient gradient) {
+        blocks[0] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[1] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[2] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[3] = new Rectangle(size - 1, size - 1, gradient);
+        blocks[0].setX(size * 4);
+        blocks[1].setX(size * 5);
+        blocks[2].setX(size * 6);
+        blocks[3].setX(size * 6);
+        blocks[3].setY(size);
+    }
+
+    // Animasi rotasi
+    private void animateRotation(Node block) {
+        RotateTransition rotate = new RotateTransition(Duration.millis(200), block);
+        rotate.setByAngle(90); // Putar 90 derajat
+        rotate.setCycleCount(1);
+        rotate.play();
+    }
+
+    @Override
+    public void rotate(boolean[][] mesh) {
+        if (blocks.length <= 1) return; // Square tidak perlu rotasi
+
+        // Menyimpan posisi sebelum rotasi untuk membatalkan jika keluar dari grid
+        double[] originalPositionsX = new double[blocks.length];
+        double[] originalPositionsY = new double[blocks.length];
+
+        for (int i = 0; i < blocks.length; i++) {
+            originalPositionsX[i] = blocks[i].getX();
+            originalPositionsY[i] = blocks[i].getY();
+        }
+
+        double centerX = blocks[1].getX();  // Pusat rotasi
+        double centerY = blocks[1].getY();  // Pusat rotasi
+
+        // Rotasi blok
+        for (Rectangle block : blocks) {
+            double relativeX = block.getX() - centerX;
+            double relativeY = block.getY() - centerY;
+
+            block.setX(centerX - relativeY);
+            block.setY(centerY + relativeX);
+
+            animateRotation(block); // Animasi rotasi
+        }
+
+        // Memastikan rotasi tidak keluar dari grid
+        if (!canMove(this, mesh)) {
+            // Batalkan rotasi jika keluar dari grid
+            for (int i = 0; i < blocks.length; i++) {
+                blocks[i].setX(originalPositionsX[i]);
+                blocks[i].setY(originalPositionsY[i]);
+            }
+        }
+    }
+
+    // Mengganti WIDTH dan HEIGHT dengan Tetris.WIDTH dan Tetris.HEIGHT
+    public boolean canMove(Form form, boolean[][] mesh) {
+        for (Rectangle block : form.getBlocks()) {
+            int x = (int) (block.getX() / size);
+            int y = (int) (block.getY() / size);
+
+            // Periksa apakah blok keluar dari grid atau bertabrakan dengan blok lain
+            if (x < 0 || x >= Tetris.WIDTH || y >= Tetris.HEIGHT || mesh[x][y]) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
