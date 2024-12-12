@@ -204,3 +204,100 @@ private Scene createGameOverScene(Stage stage) {
             showError("Error saat mengunci form: " + e.getMessage());
         }
     }
+
+    private void clearLines() {
+        for (int y = 0; y < HEIGHT; y++) {
+            boolean fullLine = true;
+
+            for (int x = 0; x < WIDTH; x++) {
+                if (!MESH[x][y]) {
+                    fullLine = false;
+                    break;
+                }
+            }
+
+            if (fullLine) {
+                for (int x = 0; x < WIDTH; x++) {
+                    MESH[x][y] = false;
+                    int finalX = x;
+                    int finalY = y;
+
+                    gamePane.getChildren().removeIf(node -> {
+                        if (node instanceof Rectangle) {
+                            Rectangle rect = (Rectangle) node;
+                            return rect.getX() == finalX * SIZE && rect.getY() == finalY * SIZE;
+                        }
+                        return false;
+                    });
+                }
+
+                for (int i = y - 1; i >= 0; i--) {
+                    for (int x = 0; x < WIDTH; x++) {
+                        if (MESH[x][i]) {
+                            MESH[x][i] = false;
+                            MESH[x][i + 1] = true;
+
+                            final int finalX = x;
+                            final int finalY = i;
+
+                            gamePane.getChildren().forEach(node -> {
+                                if (node instanceof Rectangle) {
+                                    Rectangle rect = (Rectangle) node;
+                                    if (rect.getX() == finalX * SIZE && rect.getY() == finalY * SIZE) {
+                                        rect.setY(rect.getY() + SIZE);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+
+                score += 10;
+                lines++;
+                updateScoreAndLines();
+            }
+        }
+    }
+
+    private void updateScoreAndLines() {
+        scoreText.setText("Score: " + score);
+        linesText.setText("Lines: " + lines);
+    }
+
+    private boolean isGameOver() {
+        for (int x = 0; x < WIDTH; x++) {
+            if (MESH[x][0]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    public static int getScore() {
+        return score;
+    }
+
+    public static void setScore(int score) {
+        Tetris.score = score;
+    }
+
+    public static int getLines() {
+        return lines;
+    }
+
+    public static void setLines(int lines) {
+        Tetris.lines = lines;
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
