@@ -1,0 +1,49 @@
+package application;
+
+import javafx.scene.shape.Rectangle;
+
+public abstract class GameObject {
+    protected Rectangle[] blocks = new Rectangle[4]; // Array blok
+    protected int size; // Ukuran tiap blok
+
+    public GameObject(int size) {
+        this.size = size;
+    }
+
+    // Getter untuk mendapatkan ukuran blok
+    public int getSize() {
+        return size;
+    }
+
+    public Rectangle[] getBlocks() {
+        return blocks;
+    }
+
+    public void moveLeft() {
+        for (Rectangle block : blocks) {
+            block.setX(block.getX() - size);
+        }
+    }
+
+    public void moveRight() {
+        for (Rectangle block : blocks) {
+            block.setX(block.getX() + size);
+        }
+    }
+
+    public void moveDown() {
+        for (Rectangle block : blocks) {
+            block.setY(block.getY() + size);
+        }
+    }
+
+    public abstract void rotate(boolean[][] mesh);
+
+    public void lock(boolean[][] mesh) {
+        for (Rectangle block : blocks) {
+            int x = (int) (block.getX() / size);
+            int y = (int) (block.getY() / size);
+            mesh[x][y] = true;
+        }
+    }
+}
